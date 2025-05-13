@@ -30,6 +30,9 @@ function App() {
     route.push(start);
     remainingDays -= start.minDays;
     
+    // Reserve days for endpoint
+    remainingDays -= end.minDays;
+    
     // Get region progression
     const regions = ['South', 'Central', 'North'];
     const startRegionIndex = regions.indexOf(start.region);
@@ -70,13 +73,30 @@ function App() {
       return isNorthToSouth ? bIndex - aIndex : aIndex - bIndex;
     });
 
-    // Add intermediate stops while ensuring we have enough days for the endpoint
-    const daysNeededForEnd = end.minDays;
+    // Ensure we have enough intermediate stops
+    const minIntermediateStops = Math.max(1, 3 - 2); // Minimum 3 total stops including start and end
+    const maxPossibleStops = Math.floor(remainingDays / 2); // Assume minimum 2 days per stop
+    const targetIntermediateStops = Math.min(minIntermediateStops, maxPossibleStops);
     
+    // Add intermediate stops
+    let addedStops = 0;
     for (const stop of potentialStops) {
-      if (remainingDays > daysNeededForEnd + stop.minDays) {
+      if (addedStops < targetIntermediateStops && remainingDays >= stop.minDays) {
         route.push(stop);
         remainingDays -= stop.minDays;
+        addedStops++;
+      }
+    }
+    
+    // If we still need more stops and have days remaining, add more
+    if (addedStops < minIntermediateStops) {
+      for (const stop of potentialStops) {
+        if (!route.includes(stop) && remainingDays >= 2) {
+          route.push(stop);
+          remainingDays -= 2; // Minimum stay
+          addedStops++;
+          if (addedStops >= minIntermediateStops) break;
+        }
       }
     }
     
