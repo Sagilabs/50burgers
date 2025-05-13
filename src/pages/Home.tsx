@@ -5,8 +5,11 @@ import FilterBar from '../components/FilterBar';
 import { recipes as initialRecipes } from '../data/recipes';
 
 const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (id: number) => void }> = ({ onRecipeClick, onToggleFavorite }) => {
-  // Sort recipes alphabetically by name
-  const sortedInitialRecipes = [...initialRecipes].sort((a, b) => a.name.localeCompare(b.name));
+  // Sort recipes alphabetically by name and limit to 27
+  const sortedInitialRecipes = [...initialRecipes]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .slice(0, 27);
+    
   const [recipes, setRecipes] = useState<Recipe[]>(sortedInitialRecipes);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(sortedInitialRecipes);
   const [filters, setFilters] = useState({
