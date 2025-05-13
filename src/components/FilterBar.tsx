@@ -44,16 +44,16 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
   };
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
       <div className="flex items-center space-x-2 mb-4">
         <Filter className="w-5 h-5 text-orange-500" />
-        <h2 className="text-lg font-semibold">Filter Recipes</h2>
+        <h2 className="text-lg font-semibold dark:text-white">Filter Recipes</h2>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="relative">
           <select
-            className="w-full p-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
             value={country}
             onChange={(e) => handleFilterChange('country', e.target.value)}
           >
@@ -67,7 +67,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
         
         <div className="relative">
           <select
-            className="w-full p-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
             value={difficulty}
             onChange={(e) => handleFilterChange('difficulty', e.target.value)}
           >
@@ -81,7 +81,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
 
         <div className="relative">
           <select
-            className="w-full p-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
             value={meatType}
             onChange={(e) => handleFilterChange('meatType', e.target.value)}
           >
@@ -95,16 +95,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
             <option value="vegetarian">Vegetarian</option>
           </select>
           <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-500 pointer-events-none" />
-        </div>
-        
-        <div className="relative md:hidden">
-          <input
-            type="text"
-            placeholder="Search recipes..."
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={searchTerm}
-            onChange={(e) => handleFilterChange('search', e.target.value)}
-          />
         </div>
       </div>
     </div>
