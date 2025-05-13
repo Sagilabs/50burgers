@@ -23,8 +23,17 @@ function App() {
     if (!start || !end) return;
     
     let remainingDays = duration;
-    let route: Location[] = [start];
-    remainingDays -= start.minDays;
+    let route: Location[] = [];
+    
+    // Add starting point if we have enough days
+    if (remainingDays >= start.minDays) {
+      route.push(start);
+      remainingDays -= start.minDays;
+    } else {
+      // Not enough days even for the starting point
+      setSelectedLocations([start]);
+      return;
+    }
     
     // Find intermediate locations based on region progression
     const startRegionIndex = ['South', 'Central', 'North'].indexOf(start.region);
@@ -47,15 +56,18 @@ function App() {
       return isNorthToSouth ? bRegionIndex - aRegionIndex : aRegionIndex - bRegionIndex;
     });
     
-    intermediateLocations.forEach(loc => {
+    // Add intermediate locations while we have enough days
+    for (const loc of intermediateLocations) {
       if (remainingDays >= loc.minDays) {
         route.push(loc);
         remainingDays -= loc.minDays;
       }
-    });
+    }
     
-    if (end !== start) {
+    // Add endpoint if we have enough days
+    if (end !== start && remainingDays >= end.minDays) {
       route.push(end);
+      remainingDays -= end.minDays;
     }
     
     setSelectedLocations(route);
