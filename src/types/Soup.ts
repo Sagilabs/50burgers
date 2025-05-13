@@ -8,7 +8,11 @@ export interface Soup {
   cookTime: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  ingredients: string[];
+  ingredients: {
+    name: string;
+    amount: string;
+    category: 'vegetable' | 'meat' | 'spice' | 'dairy' | 'grain' | 'other';
+  }[];
   instructions: string[];
   tags: string[];
   isFavorite: boolean;
@@ -19,3 +23,5 @@ export interface Soup {
     fat: number;
   };
 }
+
+export type IngredientCategory = 'vegetable' | 'meat' | 'spice' | 'dairy' | 'grain' | 'other';
