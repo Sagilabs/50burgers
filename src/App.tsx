@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -9,10 +9,19 @@ import { Recipe } from './types/Recipe';
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('darkMode');
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
   
   const selectedRecipe = selectedRecipeId !== null 
     ? recipes.find(r => r.id === selectedRecipeId) 
     : null;
+  
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
   
   const handleRecipeClick = (id: number) => {
     setSelectedRecipeId(id);
@@ -31,9 +40,13 @@ function App() {
     ));
   };
   
+  const handleToggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+  
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
+    <div className={`flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
+      <Header isDarkMode={isDarkMode} onToggleDarkMode={handleToggleDarkMode} />
       
       <main className="flex-grow py-6 print:py-0">
         {selectedRecipe ? (
