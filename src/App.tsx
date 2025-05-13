@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Location } from './types/Location';
 import { locations } from './data/locations';
-import { Clock, MapPin, Umbrella, Building2, History as HistoryIcon, Mic as Mix } from 'lucide-react';
+import { Clock, MapPin, Umbrella, Building2, History as HistoryIcon, Mic as Mix, Plane, Train, Bus } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 function App() {
@@ -88,6 +88,15 @@ function App() {
     }
     
     setSelectedLocations(route);
+  };
+
+  const getTransportIcon = (type: string) => {
+    switch (type) {
+      case 'plane': return <Plane className="w-4 h-4" />;
+      case 'train': return <Train className="w-4 h-4" />;
+      case 'bus': return <Bus className="w-4 h-4" />;
+      default: return null;
+    }
   };
 
   return (
@@ -221,27 +230,62 @@ function App() {
                 <h2 className="text-xl font-semibold mb-4">Your Itinerary</h2>
                 <div className="space-y-4">
                   {selectedLocations.map((loc, index) => (
-                    <div key={loc.id} className="border-b pb-4 last:border-b-0">
-                      <div className="flex items-start">
-                        <div className="bg-emerald-100 rounded-full p-2 mr-3">
-                          <span className="text-emerald-600 font-bold">
-                            {index + 1}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{loc.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            Suggested stay: {loc.minDays} days
-                          </p>
-                          <ul className="mt-2 space-y-1">
-                            {loc.activities.map((activity, i) => (
-                              <li key={i} className="text-sm text-gray-600">
-                                • {activity}
-                              </li>
-                            ))}
-                          </ul>
+                    <div key={loc.id}>
+                      <div className="border-b pb-4 last:border-b-0">
+                        <div className="flex items-start">
+                          <div className="bg-emerald-100 rounded-full p-2 mr-3">
+                            <span className="text-emerald-600 font-bold">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">{loc.name}</h3>
+                            <p className="text-sm text-gray-600">
+                              Suggested stay: {loc.minDays} days
+                            </p>
+                            <ul className="mt-2 space-y-1">
+                              {loc.activities.map((activity, i) => (
+                                <li key={i} className="text-sm text-gray-600">
+                                  • {activity}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
                       </div>
+                      
+                      {index < selectedLocations.length - 1 && loc.transport?.to[selectedLocations[index + 1].name] && (
+                        <div className="my-4 pl-11">
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <p className="text-sm font-medium text-gray-700 mb-2">
+                              Transport to {selectedLocations[index + 1].name}:
+                            </p>
+                            <div className="space-y-2">
+                              {loc.transport.to[selectedLocations[index + 1].name].options.map((option, i) => (
+                                <div key={i} className="flex items-center justify-between text-sm">
+                                  <div className="flex items-center">
+                                    {getTransportIcon(option.type)}
+                                    <span className="ml-2">{option.duration}</span>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-gray-600">{option.cost}</span>
+                                    {option.url && (
+                                      <a
+                                        href={option.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-emerald-600 hover:text-emerald-700"
+                                      >
+                                        Book
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
