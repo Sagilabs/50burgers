@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Location } from './types/Location';
 import { locations } from './data/locations';
-import { Clock, MapPin, Umbrella, Building2, History as HistoryIcon, Mix } from 'lucide-react';
+import { Clock, MapPin, Umbrella, Building2, History as HistoryIcon, Mic as Mix } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 function App() {
