@@ -26,29 +26,25 @@ function App() {
     let remainingDays = duration;
     let route: Location[] = [];
     
-    // Add starting point
+    // Always add starting point
     route.push(start);
     remainingDays -= start.minDays;
     
-    if (remainingDays < 0) {
-      setSelectedLocations([start]);
-      return;
-    }
-    
-    // Find intermediate locations based on region progression and preference
-    const startRegionIndex = ['South', 'Central', 'North'].indexOf(start.region);
-    const endRegionIndex = ['South', 'Central', 'North'].indexOf(end.region);
+    // Get region progression
+    const regions = ['South', 'Central', 'North'];
+    const startRegionIndex = regions.indexOf(start.region);
+    const endRegionIndex = regions.indexOf(end.region);
     const isNorthToSouth = startRegionIndex > endRegionIndex;
     
-    const intermediateLocations = locations.filter(loc => {
+    // Calculate regions to visit
+    const regionsToVisit = isNorthToSouth 
+      ? regions.slice(endRegionIndex, startRegionIndex + 1).reverse()
+      : regions.slice(startRegionIndex, endRegionIndex + 1);
+    
+    // Filter locations by preference and regions
+    const potentialStops = locations.filter(loc => {
       if (loc.id === start.id || loc.id === end.id) return false;
-      
-      const locRegionIndex = ['South', 'Central', 'North'].indexOf(loc.region);
-      const isInRoute = isNorthToSouth 
-        ? locRegionIndex <= startRegionIndex && locRegionIndex >= endRegionIndex
-        : locRegionIndex >= startRegionIndex && locRegionIndex <= endRegionIndex;
-
-      if (!isInRoute) return false;
+      if (!regionsToVisit.includes(loc.region)) return false;
 
       switch (preference) {
         case 'beaches':
@@ -69,24 +65,23 @@ function App() {
           return true;
       }
     }).sort((a, b) => {
-      const aRegionIndex = ['South', 'Central', 'North'].indexOf(a.region);
-      const bRegionIndex = ['South', 'Central', 'North'].indexOf(b.region);
-      return isNorthToSouth ? bRegionIndex - aRegionIndex : aRegionIndex - bRegionIndex;
+      const aIndex = regions.indexOf(a.region);
+      const bIndex = regions.indexOf(b.region);
+      return isNorthToSouth ? bIndex - aIndex : aIndex - bIndex;
     });
+
+    // Add intermediate stops while ensuring we have enough days for the endpoint
+    const daysNeededForEnd = end.minDays;
     
-    // Add intermediate locations while we have enough days
-    for (const loc of intermediateLocations) {
-      if (remainingDays >= loc.minDays) {
-        route.push(loc);
-        remainingDays -= loc.minDays;
+    for (const stop of potentialStops) {
+      if (remainingDays > daysNeededForEnd + stop.minDays) {
+        route.push(stop);
+        remainingDays -= stop.minDays;
       }
     }
     
-    // Add endpoint if we have enough days
-    if (remainingDays >= end.minDays) {
-      route.push(end);
-      remainingDays -= end.minDays;
-    }
+    // Always add endpoint
+    route.push(end);
     
     setSelectedLocations(route);
   };
