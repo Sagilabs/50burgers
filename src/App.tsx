@@ -26,12 +26,9 @@ function App() {
     let remainingDays = duration;
     let route: Location[] = [];
     
-    // Always add starting point
+    // Add starting point
     route.push(start);
     remainingDays -= start.minDays;
-    
-    // Reserve days for endpoint
-    remainingDays -= end.minDays;
     
     // Get region progression
     const regions = ['South', 'Central', 'North'];
@@ -73,34 +70,44 @@ function App() {
       return isNorthToSouth ? bIndex - aIndex : aIndex - bIndex;
     });
 
-    // Ensure we have enough intermediate stops
-    const minIntermediateStops = Math.max(1, 3 - 2); // Minimum 3 total stops including start and end
-    const maxPossibleStops = Math.floor(remainingDays / 2); // Assume minimum 2 days per stop
-    const targetIntermediateStops = Math.min(minIntermediateStops, maxPossibleStops);
+    // Calculate minimum required stops
+    const minRequiredStops = Math.max(1, Math.min(potentialStops.length, 2)); // At least 1 intermediate stop, max 2
+    
+    // Reserve days for endpoint and minimum stops
+    const daysForEndpoint = end.minDays;
+    const daysForMinStops = minRequiredStops * 2; // Minimum 2 days per stop
+    remainingDays -= daysForEndpoint;
     
     // Add intermediate stops
     let addedStops = 0;
     for (const stop of potentialStops) {
-      if (addedStops < targetIntermediateStops && remainingDays >= stop.minDays) {
+      // Ensure we have enough days for remaining minimum stops and endpoint
+      const remainingRequiredStops = Math.max(0, minRequiredStops - addedStops);
+      const daysNeededForRemaining = (remainingRequiredStops * 2) + daysForEndpoint;
+      
+      if (remainingDays - stop.minDays >= daysNeededForRemaining) {
         route.push(stop);
         remainingDays -= stop.minDays;
         addedStops++;
       }
+      
+      // If we have enough stops and can't fit more, break
+      if (addedStops >= minRequiredStops && remainingDays < 4) break;
     }
     
-    // If we still need more stops and have days remaining, add more
-    if (addedStops < minIntermediateStops) {
-      for (const stop of potentialStops) {
-        if (!route.includes(stop) && remainingDays >= 2) {
-          route.push(stop);
-          remainingDays -= 2; // Minimum stay
-          addedStops++;
-          if (addedStops >= minIntermediateStops) break;
-        }
+    // If we still don't have minimum stops, add them with minimum days
+    while (addedStops < minRequiredStops && remainingDays >= 4) {
+      const nextStop = potentialStops.find(stop => !route.includes(stop));
+      if (nextStop) {
+        route.push(nextStop);
+        remainingDays -= 2; // Minimum stay
+        addedStops++;
+      } else {
+        break;
       }
     }
     
-    // Always add endpoint
+    // Add endpoint
     route.push(end);
     
     setSelectedLocations(route);
