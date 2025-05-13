@@ -1,75 +1,161 @@
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import RecipeDetail from './components/RecipeDetail';
-import { recipes as initialRecipes } from './data/recipes';
-import { Recipe } from './types/Recipe';
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Location } from './types/Location';
+import { locations } from './data/locations';
+import { Clock, MapPin } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
 
 function App() {
-  const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
-  const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    return savedMode ? JSON.parse(savedMode) : false;
-  });
-  
-  const selectedRecipe = selectedRecipeId !== null 
-    ? recipes.find(r => r.id === selectedRecipeId) 
-    : null;
-  
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
-  
-  const handleRecipeClick = (id: number) => {
-    setSelectedRecipeId(id);
-    window.scrollTo(0, 0);
+  const [duration, setDuration] = useState<number>(7);
+  const [startingPoint, setStartingPoint] = useState<string>('hanoi');
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
+
+  const handlePlanRoute = () => {
+    // Simple route planning based on duration and starting point
+    const start = locations.find(loc => 
+      loc.name.toLowerCase() === startingPoint.toLowerCase()
+    );
+    
+    if (!start) return;
+    
+    let remainingDays = duration;
+    let route: Location[] = [start];
+    remainingDays -= start.minDays;
+    
+    // Add nearby locations until we run out of days
+    locations.forEach(loc => {
+      if (loc.id !== start.id && remainingDays >= loc.minDays) {
+        route.push(loc);
+        remainingDays -= loc.minDays;
+      }
+    });
+    
+    setSelectedLocations(route);
   };
-  
-  const handleBackClick = () => {
-    setSelectedRecipeId(null);
-  };
-  
-  const handleToggleFavorite = (id: number) => {
-    setRecipes(recipes.map(recipe => 
-      recipe.id === id 
-        ? { ...recipe, isFavorite: !recipe.isFavorite } 
-        : recipe
-    ));
-  };
-  
-  const handleToggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-  
+
   return (
-    <div className={`flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
-      <Header isDarkMode={isDarkMode} onToggleDarkMode={handleToggleDarkMode} />
-      
-      <main className="flex-grow py-6 print:py-0">
-        {selectedRecipe ? (
-          <RecipeDetail 
-            recipe={selectedRecipe}
-            onBack={handleBackClick}
-            onToggleFavorite={handleToggleFavorite}
-          />
-        ) : (
-          <Home 
-            onRecipeClick={handleRecipeClick}
-            onToggleFavorite={handleToggleFavorite}
-          />
-        )}
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-emerald-600 text-white py-6">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold flex items-center">
+            <MapPin className="mr-2" />
+            Vietnam Travel Planner
+          </h1>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold mb-4">Plan Your Route</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration (days)
+                  </label>
+                  <div className="flex items-center">
+                    <Clock className="w-5 h-5 text-gray-400 mr-2" />
+                    <input
+                      type="number"
+                      min="1"
+                      max="30"
+                      value={duration}
+                      onChange={(e) => setDuration(parseInt(e.target.value))}
+                      className="w-full p-2 border rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Starting Point
+                  </label>
+                  <select
+                    value={startingPoint}
+                    onChange={(e) => setStartingPoint(e.target.value)}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    {locations.map(loc => (
+                      <option key={loc.id} value={loc.name.toLowerCase()}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={handlePlanRoute}
+                  className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+                >
+                  Plan Route
+                </button>
+              </div>
+            </div>
+
+            {selectedLocations.length > 0 && (
+              <div className="bg-white rounded-lg shadow p-6 mt-6">
+                <h2 className="text-xl font-semibold mb-4">Your Itinerary</h2>
+                <div className="space-y-4">
+                  {selectedLocations.map((loc, index) => (
+                    <div key={loc.id} className="border-b pb-4 last:border-b-0">
+                      <div className="flex items-start">
+                        <div className="bg-emerald-100 rounded-full p-2 mr-3">
+                          <span className="text-emerald-600 font-bold">
+                            {index + 1}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{loc.name}</h3>
+                          <p className="text-sm text-gray-600">
+                            Suggested stay: {loc.minDays} days
+                          </p>
+                          <ul className="mt-2 space-y-1">
+                            {loc.activities.map((activity, i) => (
+                              <li key={i} className="text-sm text-gray-600">
+                                • {activity}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="md:col-span-2 h-[600px]">
+            <MapContainer
+              center={[16.0544, 108.2022]}
+              zoom={6}
+              className="w-full h-full rounded-lg shadow"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {selectedLocations.map((loc, index) => (
+                <Marker key={loc.id} position={[loc.lat, loc.lng]}>
+                  <Popup>
+                    <div className="text-center">
+                      <h3 className="font-semibold">{loc.name}</h3>
+                      <p className="text-sm text-gray-600">{loc.description}</p>
+                      <img
+                        src={loc.imageUrl}
+                        alt={loc.name}
+                        className="w-full h-32 object-cover mt-2 rounded"
+                      />
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+        </div>
       </main>
-      
-      <div className="print:hidden">
-        <Footer />
-      </div>
     </div>
   );
 }
