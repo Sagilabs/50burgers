@@ -26,12 +26,11 @@ function App() {
     let remainingDays = duration;
     let route: Location[] = [];
     
-    // Add starting point if we have enough days
-    if (remainingDays >= start.minDays) {
-      route.push(start);
-      remainingDays -= start.minDays;
-    } else {
-      // Not enough days even for the starting point
+    // Add starting point
+    route.push(start);
+    remainingDays -= start.minDays;
+    
+    if (remainingDays < 0) {
       setSelectedLocations([start]);
       return;
     }
@@ -49,24 +48,26 @@ function App() {
         ? locRegionIndex <= startRegionIndex && locRegionIndex >= endRegionIndex
         : locRegionIndex >= startRegionIndex && locRegionIndex <= endRegionIndex;
 
-      // Filter based on preference
-      if (preference === 'beaches') {
-        return isInRoute && loc.activities.some(activity => 
-          activity.toLowerCase().includes('beach') || 
-          activity.toLowerCase().includes('island')
-        );
-      } else if (preference === 'cities') {
-        return isInRoute && loc.type === 'city';
-      } else if (preference === 'history') {
-        return isInRoute && loc.activities.some(activity =>
-          activity.toLowerCase().includes('temple') ||
-          activity.toLowerCase().includes('museum') ||
-          activity.toLowerCase().includes('ancient') ||
-          activity.toLowerCase().includes('imperial')
-        );
+      if (!isInRoute) return false;
+
+      switch (preference) {
+        case 'beaches':
+          return loc.activities.some(activity => 
+            activity.toLowerCase().includes('beach') || 
+            activity.toLowerCase().includes('island')
+          );
+        case 'cities':
+          return loc.type === 'city';
+        case 'history':
+          return loc.activities.some(activity =>
+            activity.toLowerCase().includes('temple') ||
+            activity.toLowerCase().includes('museum') ||
+            activity.toLowerCase().includes('ancient') ||
+            activity.toLowerCase().includes('imperial')
+          );
+        default:
+          return true;
       }
-      // For 'mix', return all locations in route
-      return isInRoute;
     }).sort((a, b) => {
       const aRegionIndex = ['South', 'Central', 'North'].indexOf(a.region);
       const bRegionIndex = ['South', 'Central', 'North'].indexOf(b.region);
@@ -82,7 +83,7 @@ function App() {
     }
     
     // Add endpoint if we have enough days
-    if (end !== start && remainingDays >= end.minDays) {
+    if (remainingDays >= end.minDays) {
       route.push(end);
       remainingDays -= end.minDays;
     }
