@@ -5,8 +5,10 @@ import FilterBar from '../components/FilterBar';
 import { recipes as initialRecipes } from '../data/recipes';
 
 const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (id: number) => void }> = ({ onRecipeClick, onToggleFavorite }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
-  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(initialRecipes);
+  // Sort recipes alphabetically by name
+  const sortedInitialRecipes = [...initialRecipes].sort((a, b) => a.name.localeCompare(b.name));
+  const [recipes, setRecipes] = useState<Recipe[]>(sortedInitialRecipes);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>(sortedInitialRecipes);
   const [filters, setFilters] = useState({
     country: '',
     difficulty: '',
@@ -14,7 +16,7 @@ const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (i
     searchTerm: '',
   });
   
-  const countries = [...new Set(recipes.map(recipe => recipe.country))];
+  const countries = [...new Set(recipes.map(recipe => recipe.country))].sort();
   
   useEffect(() => {
     let result = recipes;
