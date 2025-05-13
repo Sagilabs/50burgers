@@ -3,7 +3,6 @@ import { Recipe } from '../types/Recipe';
 import RecipeCard from '../components/RecipeCard';
 import FilterBar from '../components/FilterBar';
 import { recipes as initialRecipes } from '../data/recipes';
-import { RefreshCw } from 'lucide-react';
 
 const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (id: number) => void }> = ({ onRecipeClick, onToggleFavorite }) => {
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes);
@@ -49,16 +48,6 @@ const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (i
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
   };
-
-  const generateMoreRecipes = () => {
-    const lastId = Math.max(...recipes.map(r => r.id));
-    const newRecipes = Array.from({ length: 24 }, (_, i) => ({
-      ...recipes[Math.floor(Math.random() * recipes.length)],
-      id: lastId + i + 1,
-      name: `${recipes[Math.floor(Math.random() * recipes.length)].name} ${lastId + i + 1}`,
-    }));
-    setRecipes([...recipes, ...newRecipes]);
-  };
   
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,20 +67,10 @@ const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (i
         </div>
       </section>
       
-      <div className="flex justify-between items-center mb-6">
-        <FilterBar
-          onFilterChange={handleFilterChange}
-          countries={countries}
-        />
-        
-        <button
-          onClick={generateMoreRecipes}
-          className="ml-4 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg flex items-center transition-colors"
-        >
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Generate More
-        </button>
-      </div>
+      <FilterBar
+        onFilterChange={handleFilterChange}
+        countries={countries}
+      />
       
       <section>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
