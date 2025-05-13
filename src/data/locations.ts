@@ -54,6 +54,24 @@ export const locations: Location[] = [
               url: "https://dsvn.vn"
             }
           ]
+        },
+        "Hoi An": {
+          options: [
+            {
+              type: "plane",
+              duration: "1h 20m",
+              cost: "$30-60",
+              frequency: "Multiple daily",
+              url: "https://www.vietjetair.com"
+            },
+            {
+              type: "train",
+              duration: "17h",
+              cost: "$45-80",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
         }
       }
     }
@@ -111,6 +129,35 @@ export const locations: Location[] = [
               url: "https://dsvn.vn"
             }
           ]
+        },
+        "Hue": {
+          options: [
+            {
+              type: "train",
+              duration: "2h 30m",
+              cost: "$10-20",
+              frequency: "Multiple daily",
+              url: "https://dsvn.vn"
+            },
+            {
+              type: "bus",
+              duration: "3h",
+              cost: "$8-15",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
+            }
+          ]
+        },
+        "Hoi An": {
+          options: [
+            {
+              type: "bus",
+              duration: "45m",
+              cost: "$5-8",
+              frequency: "Every hour",
+              url: "https://www.bookaway.com"
+            }
+          ]
         }
       }
     }
@@ -166,6 +213,17 @@ export const locations: Location[] = [
               cost: "$35-70",
               frequency: "Daily",
               url: "https://dsvn.vn"
+            }
+          ]
+        },
+        "Ha Long Bay": {
+          options: [
+            {
+              type: "bus",
+              duration: "2h 30m",
+              cost: "$10-15",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
             }
           ]
         }
@@ -232,6 +290,17 @@ export const locations: Location[] = [
               url: "https://www.bookaway.com"
             }
           ]
+        },
+        "Hue": {
+          options: [
+            {
+              type: "bus",
+              duration: "3h 30m",
+              cost: "$12-18",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
+            }
+          ]
         }
       }
     }
@@ -267,6 +336,17 @@ export const locations: Location[] = [
               type: "bus",
               duration: "3h",
               cost: "$8-15",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
+            }
+          ]
+        },
+        "Hoi An": {
+          options: [
+            {
+              type: "bus",
+              duration: "3h 30m",
+              cost: "$12-18",
               frequency: "Every 2 hours",
               url: "https://www.bookaway.com"
             }
