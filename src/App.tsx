@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 function App() {
   const [duration, setDuration] = useState<number>(7);
   const [startingPoint, setStartingPoint] = useState<string>('ho chi minh city');
+  const [endpoint, setEndpoint] = useState<string>('hanoi');
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
 
   const handlePlanRoute = () => {
@@ -15,33 +16,47 @@ function App() {
       loc.name.toLowerCase() === startingPoint.toLowerCase()
     );
     
-    if (!start) return;
+    const end = locations.find(loc =>
+      loc.name.toLowerCase() === endpoint.toLowerCase()
+    );
+    
+    if (!start || !end) return;
     
     let remainingDays = duration;
     let route: Location[] = [start];
     remainingDays -= start.minDays;
     
-    // Add nearby locations based on region
-    const nearbyLocations = locations.filter(loc => {
-      if (loc.id === start.id) return false;
+    // Find intermediate locations based on region progression
+    const startRegionIndex = ['South', 'Central', 'North'].indexOf(start.region);
+    const endRegionIndex = ['South', 'Central', 'North'].indexOf(end.region);
+    const isNorthToSouth = startRegionIndex > endRegionIndex;
+    
+    const intermediateLocations = locations.filter(loc => {
+      if (loc.id === start.id || loc.id === end.id) return false;
       
-      // Prioritize locations in the same region first
-      if (loc.region === start.region) return true;
+      const locRegionIndex = ['South', 'Central', 'North'].indexOf(loc.region);
       
-      // Then add adjacent regions based on starting point
-      if (start.region === 'South' && loc.region === 'Central') return true;
-      if (start.region === 'Central' && (loc.region === 'North' || loc.region === 'South')) return true;
-      if (start.region === 'North' && loc.region === 'Central') return true;
-      
-      return false;
+      if (isNorthToSouth) {
+        return locRegionIndex <= startRegionIndex && locRegionIndex >= endRegionIndex;
+      } else {
+        return locRegionIndex >= startRegionIndex && locRegionIndex <= endRegionIndex;
+      }
+    }).sort((a, b) => {
+      const aRegionIndex = ['South', 'Central', 'North'].indexOf(a.region);
+      const bRegionIndex = ['South', 'Central', 'North'].indexOf(b.region);
+      return isNorthToSouth ? bRegionIndex - aRegionIndex : aRegionIndex - bRegionIndex;
     });
     
-    nearbyLocations.forEach(loc => {
+    intermediateLocations.forEach(loc => {
       if (remainingDays >= loc.minDays) {
         route.push(loc);
         remainingDays -= loc.minDays;
       }
     });
+    
+    if (end !== start) {
+      route.push(end);
+    }
     
     setSelectedLocations(route);
   };
@@ -88,6 +103,21 @@ function App() {
                   <select
                     value={startingPoint}
                     onChange={(e) => setStartingPoint(e.target.value)}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    <option value="ho chi minh city">Ho Chi Minh City</option>
+                    <option value="da nang">Da Nang</option>
+                    <option value="hanoi">Hanoi</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Point
+                  </label>
+                  <select
+                    value={endpoint}
+                    onChange={(e) => setEndpoint(e.target.value)}
                     className="w-full p-2 border rounded-lg"
                   >
                     <option value="ho chi minh city">Ho Chi Minh City</option>
