@@ -7,11 +7,10 @@ import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [duration, setDuration] = useState<number>(7);
-  const [startingPoint, setStartingPoint] = useState<string>('hanoi');
+  const [startingPoint, setStartingPoint] = useState<string>('ho chi minh city');
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
 
   const handlePlanRoute = () => {
-    // Simple route planning based on duration and starting point
     const start = locations.find(loc => 
       loc.name.toLowerCase() === startingPoint.toLowerCase()
     );
@@ -22,9 +21,23 @@ function App() {
     let route: Location[] = [start];
     remainingDays -= start.minDays;
     
-    // Add nearby locations until we run out of days
-    locations.forEach(loc => {
-      if (loc.id !== start.id && remainingDays >= loc.minDays) {
+    // Add nearby locations based on region
+    const nearbyLocations = locations.filter(loc => {
+      if (loc.id === start.id) return false;
+      
+      // Prioritize locations in the same region first
+      if (loc.region === start.region) return true;
+      
+      // Then add adjacent regions based on starting point
+      if (start.region === 'South' && loc.region === 'Central') return true;
+      if (start.region === 'Central' && (loc.region === 'North' || loc.region === 'South')) return true;
+      if (start.region === 'North' && loc.region === 'Central') return true;
+      
+      return false;
+    });
+    
+    nearbyLocations.forEach(loc => {
+      if (remainingDays >= loc.minDays) {
         route.push(loc);
         remainingDays -= loc.minDays;
       }
@@ -77,11 +90,9 @@ function App() {
                     onChange={(e) => setStartingPoint(e.target.value)}
                     className="w-full p-2 border rounded-lg"
                   >
-                    {locations.map(loc => (
-                      <option key={loc.id} value={loc.name.toLowerCase()}>
-                        {loc.name}
-                      </option>
-                    ))}
+                    <option value="ho chi minh city">Ho Chi Minh City</option>
+                    <option value="da nang">Da Nang</option>
+                    <option value="hanoi">Hanoi</option>
                   </select>
                 </div>
 
