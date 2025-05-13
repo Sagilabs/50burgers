@@ -16,7 +16,47 @@ export const locations: Location[] = [
       "Explore Ben Thanh Market",
       "Cu Chi Tunnels tour",
       "Notre-Dame Cathedral"
-    ]
+    ],
+    transport: {
+      to: {
+        "Da Nang": {
+          options: [
+            {
+              type: "plane",
+              duration: "1h 20m",
+              cost: "$30-60",
+              frequency: "Multiple daily",
+              url: "https://www.vietjetair.com"
+            },
+            {
+              type: "train",
+              duration: "16h 30m",
+              cost: "$40-75",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        },
+        "Hanoi": {
+          options: [
+            {
+              type: "plane",
+              duration: "2h 10m",
+              cost: "$40-80",
+              frequency: "Multiple daily",
+              url: "https://www.vietnamairlines.com"
+            },
+            {
+              type: "train",
+              duration: "32h",
+              cost: "$65-120",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        }
+      }
+    }
   },
   {
     id: 2,
@@ -33,7 +73,47 @@ export const locations: Location[] = [
       "Marble Mountains exploration",
       "My Khe Beach",
       "Ba Na Hills"
-    ]
+    ],
+    transport: {
+      to: {
+        "Ho Chi Minh City": {
+          options: [
+            {
+              type: "plane",
+              duration: "1h 20m",
+              cost: "$30-60",
+              frequency: "Multiple daily",
+              url: "https://www.vietjetair.com"
+            },
+            {
+              type: "train",
+              duration: "16h 30m",
+              cost: "$40-75",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        },
+        "Hanoi": {
+          options: [
+            {
+              type: "plane",
+              duration: "1h 20m",
+              cost: "$30-60",
+              frequency: "Multiple daily",
+              url: "https://www.vietjetair.com"
+            },
+            {
+              type: "train",
+              duration: "15h",
+              cost: "$35-70",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        }
+      }
+    }
   },
   {
     id: 3,
@@ -50,7 +130,47 @@ export const locations: Location[] = [
       "Explore Old Quarter",
       "Temple of Literature",
       "Try street food"
-    ]
+    ],
+    transport: {
+      to: {
+        "Ho Chi Minh City": {
+          options: [
+            {
+              type: "plane",
+              duration: "2h 10m",
+              cost: "$40-80",
+              frequency: "Multiple daily",
+              url: "https://www.vietnamairlines.com"
+            },
+            {
+              type: "train",
+              duration: "32h",
+              cost: "$65-120",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        },
+        "Da Nang": {
+          options: [
+            {
+              type: "plane",
+              duration: "1h 20m",
+              cost: "$30-60",
+              frequency: "Multiple daily",
+              url: "https://www.vietjetair.com"
+            },
+            {
+              type: "train",
+              duration: "15h",
+              cost: "$35-70",
+              frequency: "Daily",
+              url: "https://dsvn.vn"
+            }
+          ]
+        }
+      }
+    }
   },
   {
     id: 4,
@@ -67,7 +187,22 @@ export const locations: Location[] = [
       "Kayaking",
       "Visit floating villages",
       "Cave exploration"
-    ]
+    ],
+    transport: {
+      to: {
+        "Hanoi": {
+          options: [
+            {
+              type: "bus",
+              duration: "2h 30m",
+              cost: "$10-15",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
+            }
+          ]
+        }
+      }
+    }
   },
   {
     id: 5,
@@ -84,7 +219,22 @@ export const locations: Location[] = [
       "Lantern making workshop",
       "Cooking class",
       "Beach relaxation"
-    ]
+    ],
+    transport: {
+      to: {
+        "Da Nang": {
+          options: [
+            {
+              type: "bus",
+              duration: "45m",
+              cost: "$5-8",
+              frequency: "Every hour",
+              url: "https://www.bookaway.com"
+            }
+          ]
+        }
+      }
+    }
   },
   {
     id: 6,
@@ -101,6 +251,28 @@ export const locations: Location[] = [
       "Visit royal tombs",
       "Dragon boat ride",
       "Try imperial cuisine"
-    ]
+    ],
+    transport: {
+      to: {
+        "Da Nang": {
+          options: [
+            {
+              type: "train",
+              duration: "2h 30m",
+              cost: "$10-20",
+              frequency: "Multiple daily",
+              url: "https://dsvn.vn"
+            },
+            {
+              type: "bus",
+              duration: "3h",
+              cost: "$8-15",
+              frequency: "Every 2 hours",
+              url: "https://www.bookaway.com"
+            }
+          ]
+        }
+      }
+    }
   }
 ];

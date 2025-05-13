@@ -9,4 +9,17 @@ export interface Location {
   minDays: number;
   imageUrl: string;
   activities: string[];
+  transport?: {
+    to: {
+      [destination: string]: {
+        options: {
+          type: 'train' | 'bus' | 'plane';
+          duration: string;
+          cost: string;
+          frequency: string;
+          url?: string;
+        }[];
+      };
+    };
+  };
 }
