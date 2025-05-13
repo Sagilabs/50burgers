@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Location } from './types/Location';
 import { locations } from './data/locations';
-import { Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin, Umbrella, Building2, History as HistoryIcon, Mix } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [duration, setDuration] = useState<number>(7);
   const [startingPoint, setStartingPoint] = useState<string>('ho chi minh city');
   const [endpoint, setEndpoint] = useState<string>('hanoi');
+  const [preference, setPreference] = useState<string>('mix');
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
 
   const handlePlanRoute = () => {
@@ -35,7 +36,7 @@ function App() {
       return;
     }
     
-    // Find intermediate locations based on region progression
+    // Find intermediate locations based on region progression and preference
     const startRegionIndex = ['South', 'Central', 'North'].indexOf(start.region);
     const endRegionIndex = ['South', 'Central', 'North'].indexOf(end.region);
     const isNorthToSouth = startRegionIndex > endRegionIndex;
@@ -44,12 +45,28 @@ function App() {
       if (loc.id === start.id || loc.id === end.id) return false;
       
       const locRegionIndex = ['South', 'Central', 'North'].indexOf(loc.region);
-      
-      if (isNorthToSouth) {
-        return locRegionIndex <= startRegionIndex && locRegionIndex >= endRegionIndex;
-      } else {
-        return locRegionIndex >= startRegionIndex && locRegionIndex <= endRegionIndex;
+      const isInRoute = isNorthToSouth 
+        ? locRegionIndex <= startRegionIndex && locRegionIndex >= endRegionIndex
+        : locRegionIndex >= startRegionIndex && locRegionIndex <= endRegionIndex;
+
+      // Filter based on preference
+      if (preference === 'beaches') {
+        return isInRoute && loc.activities.some(activity => 
+          activity.toLowerCase().includes('beach') || 
+          activity.toLowerCase().includes('island')
+        );
+      } else if (preference === 'cities') {
+        return isInRoute && loc.type === 'city';
+      } else if (preference === 'history') {
+        return isInRoute && loc.activities.some(activity =>
+          activity.toLowerCase().includes('temple') ||
+          activity.toLowerCase().includes('museum') ||
+          activity.toLowerCase().includes('ancient') ||
+          activity.toLowerCase().includes('imperial')
+        );
       }
+      // For 'mix', return all locations in route
+      return isInRoute;
     }).sort((a, b) => {
       const aRegionIndex = ['South', 'Central', 'North'].indexOf(a.region);
       const bRegionIndex = ['South', 'Central', 'North'].indexOf(b.region);
@@ -136,6 +153,58 @@ function App() {
                     <option value="da nang">Da Nang</option>
                     <option value="hanoi">Hanoi</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Travel Preference
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setPreference('beaches')}
+                      className={`flex items-center justify-center p-2 rounded-lg border ${
+                        preference === 'beaches' 
+                          ? 'bg-emerald-100 border-emerald-500 text-emerald-700' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <Umbrella className="w-4 h-4 mr-1" />
+                      Beaches
+                    </button>
+                    <button
+                      onClick={() => setPreference('cities')}
+                      className={`flex items-center justify-center p-2 rounded-lg border ${
+                        preference === 'cities' 
+                          ? 'bg-emerald-100 border-emerald-500 text-emerald-700' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <Building2 className="w-4 h-4 mr-1" />
+                      Cities
+                    </button>
+                    <button
+                      onClick={() => setPreference('history')}
+                      className={`flex items-center justify-center p-2 rounded-lg border ${
+                        preference === 'history' 
+                          ? 'bg-emerald-100 border-emerald-500 text-emerald-700' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <HistoryIcon className="w-4 h-4 mr-1" />
+                      History
+                    </button>
+                    <button
+                      onClick={() => setPreference('mix')}
+                      className={`flex items-center justify-center p-2 rounded-lg border ${
+                        preference === 'mix' 
+                          ? 'bg-emerald-100 border-emerald-500 text-emerald-700' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <Mix className="w-4 h-4 mr-1" />
+                      Mix
+                    </button>
+                  </div>
                 </div>
 
                 <button
