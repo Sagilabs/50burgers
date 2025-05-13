@@ -5,7 +5,6 @@ interface FilterBarProps {
   onFilterChange: (filters: {
     country: string;
     difficulty: string;
-    time: string;
     meatType: string;
     searchTerm: string;
   }) => void;
@@ -15,7 +14,6 @@ interface FilterBarProps {
 const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
   const [country, setCountry] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('');
-  const [time, setTime] = useState<string>('');
   const [meatType, setMeatType] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   
@@ -26,9 +24,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
         break;
       case 'difficulty':
         setDifficulty(value);
-        break;
-      case 'time':
-        setTime(value);
         break;
       case 'meatType':
         setMeatType(value);
@@ -43,7 +38,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
     onFilterChange({
       country: type === 'country' ? value : country,
       difficulty: type === 'difficulty' ? value : difficulty,
-      time: type === 'time' ? value : time,
       meatType: type === 'meatType' ? value : meatType,
       searchTerm: type === 'search' ? value : searchTerm,
     });
@@ -56,7 +50,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
         <h2 className="text-lg font-semibold">Filter Recipes</h2>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="relative">
           <select
             className="w-full p-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -81,21 +75,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, countries }) => {
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
-          </select>
-          <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-500 pointer-events-none" />
-        </div>
-        
-        <div className="relative">
-          <select
-            className="w-full p-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={time}
-            onChange={(e) => handleFilterChange('time', e.target.value)}
-          >
-            <option value="">Any Time</option>
-            <option value="15">Quick (≤ 15 min)</option>
-            <option value="30">Medium (≤ 30 min)</option>
-            <option value="60">Long (≤ 60 min)</option>
-            <option value="61">Very Long (&gt; 60 min)</option>
           </select>
           <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-500 pointer-events-none" />
         </div>

@@ -10,7 +10,6 @@ const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (i
   const [filters, setFilters] = useState({
     country: '',
     difficulty: '',
-    time: '',
     meatType: '',
     searchTerm: '',
   });
@@ -26,15 +25,6 @@ const Home: React.FC<{ onRecipeClick: (id: number) => void, onToggleFavorite: (i
     
     if (filters.difficulty) {
       result = result.filter(recipe => recipe.difficulty === filters.difficulty);
-    }
-    
-    if (filters.time) {
-      const timeValue = parseInt(filters.time);
-      if (timeValue <= 60) {
-        result = result.filter(recipe => (recipe.prepTime + recipe.cookTime) <= timeValue);
-      } else {
-        result = result.filter(recipe => (recipe.prepTime + recipe.cookTime) > 60);
-      }
     }
 
     if (filters.meatType) {
